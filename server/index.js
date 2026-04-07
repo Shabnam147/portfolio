@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://shabnamshaikh147147_db_use:kwIYMCxRcLo3oUY3@data.wwjmol6.mongodb.net/';
+const MONGO_URI = process.env.MONGO_URI;
 
 // ===== MIDDLEWARE =====
 app.use(cors());
