@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shabnam — Web Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --warm-white: #faf8f4;
+    --ink: #1a1714;
+    --ink-soft: #3d3730;
+    --rust: #b5451b;
+    --rust-light: #d4612a;
+    --gold: #c9a96e;
+    --gold-light: #e8d5b0;
+    --muted: #8a7f74;
+    --border: #ddd6c8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm-white);
+    color: var(--ink);
+    overflow-x: hidden;
+    line-height: 1.6;
+    cursor: none;
+
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--rust);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--rust);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 0.5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    padding: 1.4rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(250, 248, 244, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+  nav.scrolled { border-color: var(--border); }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--rust); }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-soft);
+    position: relative;
+    transition: color 0.2s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -3px; left: 0;
+    width: 0; height: 1px;
+    background: var(--rust);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--rust); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    padding: 0.55rem 1.4rem;
+    border: 1px solid var(--rust);
+    color: var(--rust) !important;
+    border-radius: 2px;
+    font-size: 0.75rem !important;
+    transition: all 0.25s !important;
+  }
+  .nav-cta:hover { background: var(--rust) !important; color: white !important; }
+  .nav-cta::after { display: none !important; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 0 4rem;
+    padding-top: 80px;
+    gap: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(201,169,110,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(181,69,27,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rust);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--rust);
+  }
+
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 6vw, 6rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.35s forwards;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--rust);
+    font-weight: 400;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-tagline {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--ink-soft);
+    max-width: 480px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.65s forwards;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .btn-primary {
+    padding: 0.9rem 2.2rem;
+    background: var(--rust);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .btn-primary:hover { background: var(--rust-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(181,69,27,0.25); }
+
+  .btn-outline {
+    padding: 0.9rem 2.2rem;
+    background: transparent;
+    color: var(--ink);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .btn-outline:hover { border-color: var(--ink); transform: translateY(-2px); }
+
+  /* Hero right side — decorative card */
+  .hero-visual {
+    position: relative; z-index: 2;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0;
+    animation: fadeIn 1s 0.6s forwards;
+  }
+
+  .hero-card {
+    width: 360px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2.5rem;
+    position: relative;
+    box-shadow: 24px 24px 0 var(--gold-light);
+  }
+
+  .hero-card-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rust);
+    font-weight: 500;
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .stat-box {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: 2px;
+    text-align: center;
+  }
+  .stat-box .num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--rust);
+    line-height: 1;
+  }
+  .stat-box .label {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .skill-chips {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-top: 1rem;
+  }
+  .chip {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    color: var(--ink-soft);
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 7rem 4rem; }
+
+  .section-label {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rust);
+    font-weight: 500;
+    margin-bottom: 1.2rem;
+  }
+  .section-label::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--rust);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--rust);
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .about-text {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    line-height: 1.85;
+    max-width: 500px;
+    margin-bottom: 2rem;
+  }
+
+  .about-highlight {
+    border-left: 2px solid var(--rust);
+    padding-left: 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--warm-white); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+    margin-top: 3rem;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .skill-item {
+    padding: 2rem 1.5rem;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    transition: all 0.25s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-item::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--rust);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .skill-item:hover { background: var(--cream); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+  .skill-item:hover::before { transform: scaleX(1); }
+
+  .skill-icon { font-size: 1.6rem; margin-bottom: 0.8rem; }
+
+  .skill-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+
+  .skill-level {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  /* ── PROJECTS ── */
+  #projects { background: var(--cream); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 3rem;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .project-card {
+    background: var(--warm-white);
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .project-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--rust);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.35s ease;
+  }
+  .project-card:hover { background: white; }
+  .project-card:hover::after { transform: scaleY(1); }
+
+  .project-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .project-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rust);
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+  }
+
+  .project-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .project-desc {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+
+  .project-features {
+    list-style: none;
+    margin-bottom: 2rem;
+  }
+  .project-features li {
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .project-features li::before {
+    content: '→';
+    color: var(--rust);
+    font-size: 0.75rem;
+  }
+
+  .project-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rust);
+    text-decoration: none;
+    transition: gap 0.2s;
+  }
+  .project-link:hover { gap: 0.9rem; }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: var(--warm-white); }
+
+  .timeline {
+    margin-top: 3rem;
+    position: relative;
+    padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--rust), var(--border));
+  }
+
+  .timeline-item {
+    padding: 0 0 3.5rem 3rem;
+    position: relative;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute; left: -5px; top: 6px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--rust);
+    border: 2px solid var(--warm-white);
+  }
+
+  .timeline-period {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rust);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .timeline-role {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-company {
+    font-size: 0.82rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+  }
+
+  .timeline-desc {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    max-width: 600px;
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--ink); color: white; }
+
+  #services .section-label { color: var(--gold); }
+  #services .section-label::before { background: var(--gold); }
+  #services .section-title { color: white; }
+  #services .section-title em { color: var(--gold); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    margin-top: 3rem;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .service-card {
+    padding: 2.5rem 2rem;
+    background: var(--ink);
+    transition: background 0.25s;
+    cursor: default;
+  }
+  .service-card:hover { background: rgba(255,255,255,0.04); }
+
+  .service-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .service-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: white;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .service-desc {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.7;
+  }
+
+  /* ── DIFFERENCE ── */
+  #difference {
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .difference-right {
+    position: relative;
+  }
+
+  .diff-card {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    border-radius: 4px;
+    position: relative;
+  }
+  .diff-card::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 8rem;
+    color: var(--gold-light);
+    position: absolute;
+    top: -1.5rem;
+    left: 1.5rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .diff-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--ink);
+    position: relative; z-index: 1;
+  }
+
+  .diff-points {
+    list-style: none;
+    margin-top: 2.5rem;
+  }
+  .diff-points li {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .diff-points li:last-child { border-bottom: none; }
+  .diff-bullet {
+    width: 24px; height: 24px;
+    background: var(--rust);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--warm-white);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .contact-desc {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+
+  .contact-link {
+    display: flex; align-items: center; gap: 1.2rem;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--cream);
+    transition: all 0.25s;
+  }
+  .contact-link:hover {
+    border-color: var(--rust);
+    transform: translateX(5px);
+    background: white;
+  }
+  .contact-link-icon {
+    width: 40px; height: 40px;
+    background: var(--rust);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .contact-link-info { display: flex; flex-direction: column; gap: 0.15rem; }
+  .contact-link-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .contact-link-value {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .contact-form-area {}
+
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus { border-color: var(--rust); }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+
+  .field-error {
+    font-size: 0.75rem;
+    color: var(--rust);
+    margin-top: 0.35rem;
+    display: none;
+  }
+  .form-group.invalid input,
+  .form-group.invalid textarea { border-color: var(--rust); }
+  .form-group.invalid .field-error { display: block; }
+
+  .form-success {
+    margin-top: 1rem;
+    padding: 0.9rem 1.2rem;
+    background: #edf7ed;
+    border: 1px solid #a8d5a2;
+    border-radius: 3px;
+    font-size: 0.88rem;
+    color: #2e6b2e;
+  }
+  .form-error {
+    margin-top: 1rem;
+    padding: 0.9rem 1.2rem;
+    background: #fdecea;
+    border: 1px solid #f5b4ae;
+    border-radius: 3px;
+    font-size: 0.88rem;
+    color: #8b1a14;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    padding: 2.5rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.04em;
+  }
+  .footer-logo span { color: var(--gold); }
+
+  .footer-copy {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .footer-links a {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  } */
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 60px; height: 1px;
+    background: var(--rust);
+    margin: 1.5rem 0;
+  }
+
+/* ── PAGE LOADER ── */
+  
+  /* ── PAGE LOADER ── */
+  #page-loader {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  opacity: 1;
+  animation: loaderFadeOut 0.6s ease 1.8s forwards;
+}
+
+/* Fade out animation */
+@keyframes loaderFadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+  .loader-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: white;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s forwards;
+  }
+  .loader-logo span { color: var(--rust); }
+  .loader-bar-wrap {
+    width: 160px; height: 1px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 1px;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 0.4s 0.4s forwards;
+  }
+  .loader-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--rust), var(--gold));
+    width: 0%;
+    animation: loadProgress 1.2s 0.4s ease forwards;
+  }
+  @keyframes loadProgress {
+    0% { width: 0%; }
+    60% { width: 70%; }
+    100% { width: 100%; }
+  }
+  .loader-text {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    opacity: 0;
+    animation: fadeIn 0.4s 0.5s forwards;
+  }
+
+
+  /* ── HAMBURGER ── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+    z-index: 200;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px; height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--warm-white);
+    z-index: 150;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .mobile-menu.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .mobile-menu a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--rust); }
+  .mobile-menu a.nav-cta {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.8rem 2rem;
+    border: 1px solid var(--rust);
+    color: var(--rust);
+    border-radius: 2px;
+  }
+  .mobile-menu a.nav-cta:hover { background: var(--rust); color: white; }
+
+  /* ── CASE STUDIES ── */
+  #case-studies { background: var(--warm-white); }
+
+  .case-study-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .case-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: box-shadow 0.3s, transform 0.3s;
+    background: white;
+  }
+  .case-card:hover {
+    box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+  }
+
+  .case-card-header {
+    padding: 2rem 2rem 1.5rem;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .case-card-icon {
+    width: 48px; height: 48px;
+    background: var(--rust);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .case-card-meta {}
+  .case-card-tag {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rust);
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+  .case-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .case-card-body { padding: 2rem; }
+
+  .case-section {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .case-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .case-section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .case-section-label.problem { color: #c0392b; }
+  .case-section-label.solution { color: var(--rust); }
+  .case-section-label.result { color: #2e7d32; }
+
+  .case-section-text {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  .case-result-badge {
+    display: inline-block;
+    background: #edf7ed;
+    border: 1px solid #a8d5a2;
+    color: #2e6b2e;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 50px;
+    margin-top: 0.5rem;
+  }
+
+  .case-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rust);
+    text-decoration: none;
+    margin-top: 1.5rem;
+    transition: gap 0.2s;
+  }
+  .case-link:hover { gap: 0.9rem; }
+
+  /* ── TESTIMONIALS ── */
+  #testimonials { background: var(--cream); }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .testi-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    position: relative;
+    transition: box-shadow 0.3s;
+  }
+  .testi-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+
+  .testi-quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    color: var(--gold-light);
+    line-height: 0.8;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .testi-text {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .testi-author {
+    display: flex; align-items: center; gap: 0.9rem;
+  }
+  .testi-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--rust);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .testi-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .testi-role {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-top: 0.1rem;
+  }
+  .testi-stars {
+    font-size: 0.75rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+  }
+  .testi-demo-note {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 2rem;
+    opacity: 0.7;
+  }
+
+  /* ── PRICING HINT ── */
+  .pricing-hint-strip {
+    background: var(--ink);
+    padding: 3.5rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .pricing-hint-left {}
+  .pricing-hint-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .pricing-hint-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 300;
+    color: white;
+    line-height: 1.2;
+  }
+  .pricing-hint-title em { font-style: italic; color: var(--gold); }
+  .pricing-tiers {
+    display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;
+  }
+  .pricing-tier {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px;
+    padding: 1.2rem 1.8rem;
+    text-align: center;
+    min-width: 130px;
+    transition: background 0.25s, border-color 0.25s;
+  }
+  .pricing-tier:hover { background: rgba(255,255,255,0.1); border-color: var(--gold); }
+  .pricing-tier-name {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+  .pricing-tier-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .pricing-tier-price sup { font-size: 1rem; vertical-align: super; }
+  .pricing-tier-sub {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.35);
+    margin-top: 0.3rem;
+    letter-spacing: 0.08em;
+  }
+  .pricing-cta-btn {
+    padding: 0.9rem 2rem;
+    background: var(--rust);
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+  .pricing-cta-btn:hover { background: var(--rust-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(181,69,27,0.3); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: flex; }
+    section, #hero { padding: 5rem 2rem; }
+    #hero { grid-template-columns: 1fr; padding-top: 100px; }
+    .hero-visual { display: none; }
+    #about, #difference, #contact { grid-template-columns: 1fr; gap: 3rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .case-study-grid { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .pricing-hint-strip { padding: 3rem 2rem; flex-direction: column; align-items: flex-start; }
+    .pricing-tiers { gap: 1rem; }
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX;
+    my = e.clientY;
+  });
+
+  function animCursor() {
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+
+    requestAnimationFrame(animCursor);
+  }
+
+  animCursor();
+});
+</script>
+</head>
+<body>
+<!-- PAGE LOADER -->
+<div id="page-loader">
+  <div class="loader-logo">S<span>.</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">Loading Portfolio</div>
+</div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobileMenu()">About</a>
+  <a href="#skills" onclick="closeMobileMenu()">Skills</a>
+  <a href="#projects" onclick="closeMobileMenu()">Projects</a>
+  <a href="#case-studies" onclick="closeMobileMenu()">Case Studies</a>
+  <a href="#experience" onclick="closeMobileMenu()">Experience</a>
+  <a href="#services" onclick="closeMobileMenu()">Services</a>
+  <a href="#contact" class="nav-cta" onclick="closeMobileMenu()">Hire Me</a>
+</div>
+  
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">S<span>.</span></a>
+   <button class="hamburger" id="hamburgerBtn">
+  <span></span>
+  <span></span>
+  <span></span>
+  </button>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#case-studies">Case Studies</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact" class="nav-cta">Hire Me</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Developer · Available for freelance</div>
+    <h1 class="hero-name">Build Websites That Help<br>Businesses Get<br><em>More Customers</em></h1>
+    <p class="hero-title">I design and develop modern websites for gyms and clothing brands to grow their business online.</p>
+    <!-- <p class="hero-tagline">I'm a web developer with experience in building modern, responsive websites. I focus on creating websites that help businesses attract customers and grow online.</p> -->
+    <div class="hero-ctas">
+      <a href="#projects" class="btn-primary">View My Work →</a>
+      <a href="#contact" class="btn-outline">Get Your Website</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="hero-card-tag">At a Glance</div>
+      <h3>Web Developer crafting digital experiences that convert visitors into customers</h3>
+      <div class="skill-chips">
+        <span class="chip">HTML5</span>
+        <span class="chip">CSS3</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip">Responsive</span>
+        <span class="chip">MongoDB</span>
+        <span class="chip">Git</span>
+        <span class="chip">SEO</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="num">Multiple </div>
+          <div class="label">Live Projects</div>
+        </div>
+        <div class="stat-box">
+          <div class="num">100%</div>
+          <div class="label">Responsive</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left reveal">
+    <div class="section-label">About Me</div>
+    <h2 class="section-title">Crafting Websites<br>That <em>Work</em></h2>
+    <div class="divider"></div>
+    <p class="about-text">
+      I'm a web developer with experience in building modern, responsive websites. I focus on creating websites that help businesses attract customers and grow online — not just something that looks good, but something that actually performs.
+    </p>
+    <blockquote class="about-highlight">
+      Every pixel I write serves a purpose: to grow your business and engage your customers.
+    </blockquote>
+    <a href="#contact" class="btn-primary">Let's Work Together →</a>
+  </div>
+  <div class="about-right reveal" style="transition-delay: 0.2s;">
+    <div class="skills-grid">
+      <div class="skill-item">
+        <div class="skill-icon">🌐</div>
+        <div class="skill-name">HTML5</div>
+        <div class="skill-level">Proficient</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">🎨</div>
+        <div class="skill-name">CSS3</div>
+        <div class="skill-level">Proficient</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-name">JavaScript</div>
+        <div class="skill-level">Proficient</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">📱</div>
+        <div class="skill-name">Responsive Design</div>
+        <div class="skill-level">Proficient</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="reveal">
+    <div class="section-label">Technical Skills</div>
+    <h2 class="section-title">Tools &amp; <em>Technologies</em></h2>
+  </div>
+  <div class="skills-grid reveal" style="transition-delay:0.15s; margin-top:3rem;">
+    <div class="skill-item">
+      <div class="skill-icon">🌐</div>
+      <div class="skill-name">HTML5</div>
+      <div class="skill-level">Semantic markup</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-icon">🎨</div>
+      <div class="skill-name">CSS3</div>
+      <div class="skill-level">Animations & Layouts</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-icon">⚡</div>
+      <div class="skill-name">JavaScript</div>
+      <div class="skill-level">ES6+</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-icon">📱</div>
+      <div class="skill-name">Responsive Design</div>
+      <div class="skill-level">Mobile-first</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-icon">🔧</div>
+      <div class="skill-name">Basic Backend</div>
+      <div class="skill-level">Node.js / Express</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-icon">🍃</div>
+      <div class="skill-name">MongoDB</div>
+      <div class="skill-level">MERN Stack</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-icon">🐙</div>
+      <div class="skill-name">Git & GitHub</div>
+      <div class="skill-level">Version Control</div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-icon">🔍</div>
+      <div class="skill-name">SEO</div>
+      <div class="skill-level">Web Fundamentals</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="reveal">
+    <div class="section-label">My Work</div>
+    <h2 class="section-title">Selected <em>Projects</em></h2>
+  </div>
+  <div class="projects-grid">
+    <!-- Project 1 -->
+    <div class="project-card reveal" style="transition-delay:0.1s;">
+      <span class="project-number">01</span>
+      <div class="project-tag">E-Commerce · Fashion</div>
+      <h3 class="project-title">Filia Fashion Store</h3>
+      <p class="project-desc">
+               A modern website designed for clothing brands to showcase products and take orders online. Built with a premium, editorial feel that reflects the brand's identity and makes every visitor want to shop.
+      <ul class="project-features">
+        <li>Multi-category navigation for Men, Women & Kids</li>
+        <li>Product listings with add-to-cart and wishlist functionality</li>
+        <li>Festive &amp; bridal collection highlighting</li>
+        <li>Promotional banner with discount codes</li>
+        <li>Fully responsive layout for all devices</li>
+        <li>User login, wishlist &amp; shopping bag system</li>
+      </ul>
+      <a href="https://filiafashion.netlify.app/" target="_blank" class="project-link">Visit Live Site →</a>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project-card reveal" style="transition-delay:0.2s;">
+      <span class="project-number">02</span>
+      <div class="project-tag">Fitness · Gym Website</div>
+      <h3 class="project-title">Iron Peak Gym</h3>
+      <p class="project-desc">
+        A high-energy performance gym website built for IRONPEAK, a Mumbai-based fitness centre. The website captures the brand's identity — "Forge Your Limits" — with a bold, dark aesthetic designed to inspire serious athletes and fitness enthusiasts to take action and sign up.
+      </p>
+      <ul class="project-features">
+        <li>Training programs showcase (HIIT, Powerlifting, Boxing &amp; more)</li>
+        <li>Meet the coaches section with credentials</li>
+        <li>Tiered pricing plans with monthly/annual toggle</li>
+        <li>Member testimonials and social proof</li>
+        <li>Scrolling marquee of training disciplines</li>
+        <li>CTA-focused design to drive membership sign-ups</li>
+      </ul>
+      <a href="https://ipgym.netlify.app/" target="_blank" class="project-link">Visit Live Site →</a>
+    </div>
+  </div>
+</section>
+<!-- CASE STUDIES -->
+<section id="case-studies">
+  <div class="reveal">
+    <div class="section-label">Deep Dive</div>
+    <h2 class="section-title">Case <em>Studies</em></h2>
+    <div class="divider"></div>
+  </div>
+  <div class="case-study-grid">
+
+    <!-- Case Study 1 -->
+    <div class="case-card reveal" style="transition-delay:0.1s;">
+      <div class="case-card-header">
+        <div class="case-card-icon">🏋️</div>
+        <div class="case-card-meta">
+          <div class="case-card-tag">Fitness · Mumbai</div>
+          <div class="case-card-title">Iron Peak Gym</div>
+        </div>
+      </div>
+      <div class="case-card-body">
+        <div class="case-section">
+          <div class="case-section-label problem">⚠ Problem</div>
+          <p class="case-section-text">IRONPEAK had no online presence. Potential members had no way to discover the gym, explore membership plans, or contact the team — all leads came through word-of-mouth only, severely limiting growth.</p>
+        </div>
+        <div class="case-section">
+          <div class="case-section-label solution">⚙ Solution</div>
+          <p class="case-section-text">Designed and built a high-energy, dark-aesthetic website with bold typography and strong calls-to-action. Included a full program showcase, coach profiles, tiered pricing with monthly/annual toggle, and a direct WhatsApp contact integration.</p>
+        </div>
+        <div class="case-section">
+          <div class="case-section-label result">✓ Result</div>
+          <p class="case-section-text">The gym now has a professional digital home that communicates its brand clearly. Members can find plans, explore programs, and enquire instantly.</p>
+          <span class="case-result-badge">📱 Fully Responsive</span>
+          <span class="case-result-badge">🚀 Live & Running</span>
+        </div>
+        <a href="https://ipgym.netlify.app/" target="_blank" class="case-link">View Live Site →</a>
+      </div>
+    </div>
+
+    <!-- Case Study 2 -->
+    <div class="case-card reveal" style="transition-delay:0.2s;">
+      <div class="case-card-header">
+        <div class="case-card-icon">👗</div>
+        <div class="case-card-meta">
+          <div class="case-card-tag">E-Commerce · Fashion</div>
+          <div class="case-card-title">Filia Fashion Store</div>
+        </div>
+      </div>
+      <div class="case-card-body">
+        <div class="case-section">
+          <div class="case-section-label problem">⚠ Problem</div>
+          <p class="case-section-text">A clothing brand was relying solely on Instagram DMs for orders. They had no structured way to showcase their full catalogue, no cart system, and no way to handle festive season demand at scale.</p>
+        </div>
+        <div class="case-section">
+          <div class="case-section-label solution">⚙ Solution</div>
+          <p class="case-section-text">Built a premium e-commerce style website with multi-category navigation (Men, Women, Kids), a wishlist and shopping bag system, festive & bridal collection highlights, and promotional discount banners — all with a high-end editorial aesthetic.</p>
+        </div>
+        <div class="case-section">
+          <div class="case-section-label result">✓ Result</div>
+          <p class="case-section-text">Filia now has a polished storefront that converts casual browsers into buyers, with a clear path from discovery to checkout — no more lost orders in DMs.</p>
+          <span class="case-result-badge">🛍️ E-Commerce Ready</span>
+          <span class="case-result-badge">✨ Premium Design</span>
+        </div>
+        <a href="https://filiafashion.netlify.app/" target="_blank" class="case-link">View Live Site →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="reveal">
+    <div class="section-label">Experience</div>
+    <h2 class="section-title">My <em>Journey</em></h2>
+  </div>
+  <div class="timeline reveal" style="transition-delay:0.15s;">
+    <div class="timeline-item">
+      <div class="timeline-period">Professional · Remote</div>
+      <h3 class="timeline-role">Full Stack Developer Intern</h3>
+      <div class="timeline-company">COSMIC 365 AI — Remote</div>
+      <p class="timeline-desc">
+        Worked on building and managing web applications, collaborating with team members across the stack. Handled both frontend and backend tasks, contributing to the development and deployment of live web projects. Gained hands-on experience in full-stack workflows and team-based development environments.
+      </p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">Volunteer · NGO</div>
+      <h3 class="timeline-role">Web Design Instructor</h3>
+      <div class="timeline-company">Abhyudaya (NGO)</div>
+      <p class="timeline-desc">
+        Taught web designing fundamentals — HTML, CSS, and basic web design principles — to students at an NGO. Designed lesson materials and practical exercises to help learners build real websites from scratch. Contributed meaningfully to improving digital literacy and employability skills among learners, helping open new career pathways for them.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="reveal">
+    <div class="section-label">What I Offer</div>
+    <h2 class="section-title">My <em>Services</em></h2>
+  </div>
+  <div class="services-cta-text reveal" style="margin-bottom:1.5rem; font-size:1.05rem; color:rgba(255,255,255,0.65); max-width:600px; line-height:1.8;">
+    Whether you run a gym, a clothing brand, or any local business — I build websites that bring you real customers, not just online presence.
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal" style="transition-delay:0.05s;">
+      <span class="service-icon">🏢</span>
+      <div class="service-title">Business Website Development</div>
+      <div class="service-desc">Professional websites tailored to represent your brand and convert visitors into paying customers.</div>
+    </div>
+    <div class="service-card reveal" style="transition-delay:0.1s;">
+      <span class="service-icon">🚀</span>
+      <div class="service-title">Landing Pages</div>
+      <div class="service-desc">High-converting landing pages designed to capture leads and drive sales for your campaigns.</div>
+    </div>
+    <div class="service-card reveal" style="transition-delay:0.15s;">
+      <span class="service-icon">🛍️</span>
+      <div class="service-title">E-Commerce Style Websites</div>
+      <div class="service-desc">Online store experiences that showcase products beautifully and make purchasing seamless.</div>
+    </div>
+    <div class="service-card reveal" style="transition-delay:0.2s;">
+      <span class="service-icon">✨</span>
+      <div class="service-title">Website Redesign</div>
+      <div class="service-desc">Breathe new life into an outdated website with a modern, responsive, performance-driven redesign.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENCE -->
+<section id="difference">
+  <div class="reveal">
+    <div class="section-label">Why Choose Me</div>
+    <h2 class="section-title">What Makes Me <em>Different</em></h2>
+    <div class="divider"></div>
+    <ul class="diff-points">
+      <li>
+        <span class="diff-bullet">01</span>
+        <span>I don't just write code — I build digital tools that serve your business goals and help you grow online.</span>
+      </li>
+      <li>
+        <span class="diff-bullet">02</span>
+        <span>Every website I deliver is fully responsive, SEO-aware, and optimized to attract and retain visitors.</span>
+      </li>
+      <li>
+        <span class="diff-bullet">03</span>
+        <span>My experience teaching web design means I communicate clearly, explain my process, and keep you in the loop.</span>
+      </li>
+      <li>
+        <span class="diff-bullet">04</span>
+        <span>I care about results — your website should generate leads and increase customer engagement, not just look pretty.</span>
+      </li>
+    </ul>
+  </div>
+  <div class="difference-right reveal" style="transition-delay:0.2s;">
+    <div class="diff-card">
+      <p class="diff-text">
+        I focus on building websites that are not just visually appealing but also help businesses generate leads and increase customer engagement. Your website is your most powerful marketing tool — I make sure it works as hard as you do.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label">Get In Touch</div>
+    <h2 class="section-title">Let's Build<br>Something <em>Together</em></h2>
+    <div class="divider"></div>
+    <p class="contact-desc">
+      Have a project in mind or want to discuss how I can help your business grow online? I'd love to hear from you. Reach out through any of these channels.
+    </p>
+    <div class="contact-links">
+     <a href="https://mail.google.com/mail/?view=cm&fs=1&to=shabnamshaikh147147@gmail.com" class="contact-link" aria-label="Send email to Shabnam Shaikh">
+  <div class="contact-link-icon">✉️</div>
+  <div class="contact-link-info">
+    <span class="contact-link-label">Email</span>
+    <span class="contact-link-value">shabnamshaikh147147@gmail.com</span>
+  </div>
+</a>
+      <a href="https://wa.me/919082113446" target="_blank" class="contact-link">
+        <div class="contact-link-icon">💬</div>
+        <div class="contact-link-info">
+          <span class="contact-link-label">WhatsApp</span>
+          <span class="contact-link-value">+91 90821 13446</span>
+        </div>
+      </a>
+      <a href="https://www.linkedin.com/in/shabnam-shaikh-21b20a254/" target="_blank" class="contact-link">
+        <div class="contact-link-icon">💼</div>
+        <div class="contact-link-info">
+          <span class="contact-link-label">LinkedIn</span>
+          <span class="contact-link-value">Shabnam Shaikh</span>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="contact-form-area reveal" style="transition-delay:0.2s;">
+    <form id="contactForm" novalidate>
+      <div class="form-group">
+        <label>Your Name <span style="color:var(--rust)">*</span></label>
+        <input type="text" id="from_name" name="from_name" placeholder="e.g. Priya Sharma" required />
+        <div class="field-error" id="err-name">Please enter your name.</div>
+      </div>
+      <div class="form-group">
+        <label>Email Address <span style="color:var(--rust)">*</span></label>
+        <input type="email" id="reply_to" name="reply_to" placeholder="your@email.com" required />
+        <div class="field-error" id="err-email">Please enter a valid email address.</div>
+      </div>
+      <div class="form-group">
+        <label>Project Type</label>
+        <input type="text" id="project_type" name="project_type" placeholder="e.g. Business Website, Landing Page..." />
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea id="message" name="message" placeholder="Tell me about your project or idea..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary" id="sendBtn">
+        <span id="btnText">Send Message →</span>
+        <span id="btnLoader" style="display:none;">Sending…</span>
+      </button>
+      <div id="formSuccess" class="form-success" style="display:none;">
+        ✅ Message sent! I'll get back to you soon.
+      </div>
+      <div id="formError" class="form-error" style="display:none;">
+        ❌ Something went wrong. Please try WhatsApp or email directly.
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Shabnam<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 Shabnam. All rights reserved.</p>
+</footer>
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ── Hamburger Menu ──
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburgerBtn.addEventListener('click', () => {
+    hamburgerBtn.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  });
+  function closeMobileMenu() {
+    hamburgerBtn.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  // ── EmailJS config — REPLACE these 3 values after setup ──
+  const EMAILJS_PUBLIC_KEY  = 'XJcNjPyAl-piPq2Jo';
+  const EMAILJS_SERVICE_ID  = 'service_axv0n9s';
+  const EMAILJS_TEMPLATE_ID = 'template_a7y4ayr';
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  // ── Custom cursor ──
+  // const cursor = document.getElementById('cursor');
+  // const ring = document.getElementById('cursorRing');
+  // let mx = 0, my = 0, rx = 0, ry = 0;
+  // document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  // function animCursor() {
+  //   cursor.style.left = mx + 'px';
+  //   cursor.style.top = my + 'px';
+  //   rx += (mx - rx) * 0.12;
+  //   ry += (my - ry) * 0.12;
+  //   ring.style.left = rx + 'px';
+  //   ring.style.top = ry + 'px';
+  //   requestAnimationFrame(animCursor);
+  // }
+  // animCursor();
+
+  // ── Navbar scroll ──
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ── Scroll reveal ──
+ 
+
+  // ── Contact form with validation & EmailJS ──
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const nameField  = document.getElementById('from_name');
+    const emailField = document.getElementById('reply_to');
+    const nameGroup  = nameField.closest('.form-group');
+    const emailGroup = emailField.closest('.form-group');
+
+    let valid = true;
+
+    // Validate name
+    if (!nameField.value.trim()) {
+      nameGroup.classList.add('invalid');
+      valid = false;
+    } else {
+      nameGroup.classList.remove('invalid');
+    }
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailField.value.trim() || !emailRegex.test(emailField.value.trim())) {
+      emailGroup.classList.add('invalid');
+      valid = false;
+    } else {
+      emailGroup.classList.remove('invalid');
+    }
+
+    if (!valid) return;
+
+    // Hide previous feedback
+    document.getElementById('formSuccess').style.display = 'none';
+    document.getElementById('formError').style.display   = 'none';
+
+    // Show loading state
+    const btn     = document.getElementById('sendBtn');
+    const btnText = document.getElementById('btnText');
+    const btnLoad = document.getElementById('btnLoader');
+    btn.disabled    = true;
+    btnText.style.display = 'none';
+    btnLoad.style.display = 'inline';
+
+    emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
+      .then(() => {
+        document.getElementById('formSuccess').style.display = 'block';
+        this.reset();
+      })
+      .catch((err) => {
+        console.error('EmailJS error:', err);
+        document.getElementById('formError').style.display = 'block';
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoad.style.display = 'none';
+      });
+  });
+
+  // Clear invalid state on input
+  document.getElementById('from_name').addEventListener('input', function() {
+    if (this.value.trim()) this.closest('.form-group').classList.remove('invalid');
+  });
+  document.getElementById('reply_to').addEventListener('input', function() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(this.value.trim())) this.closest('.form-group').classList.remove('invalid');
+  });
+</script>
+</body>
+</html>
