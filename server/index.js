@@ -62,6 +62,21 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // GET /api/messages — View all messages (protected by secret key)
+app.get('/api/admin/messages', async (req, res) => {
+  const secret = req.headers['x-admin-key'];
+
+  if (secret !== process.env.ADMIN_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const messages = await Contact.find().sort({ createdAt: -1 });
+    res.json(messages);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 // ADMIN STATS ROUTE
 app.get('/api/admin/stats', async (req, res) => {
   const secret = req.headers['x-admin-key'];
