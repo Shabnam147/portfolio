@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Shabnam Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --warm-white: #faf8f4;
+    --ink: #1a1714;
+    --ink-soft: #3d3730;
+    --rust: #b5451b;
+    --rust-light: #d4612a;
+    --gold: #c9a96e;
+    --muted: #8a7f74;
+    --border: #ddd6c8;
+    --success: #2d7a4f;
+    --error: #b5451b;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm-white);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── Login Screen ── */
+  #loginScreen {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--ink);
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .login-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.05em;
+  }
+  .login-logo span { color: var(--rust); }
+  .login-sub {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .login-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 380px;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .login-box input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 2px;
+    padding: 0.85rem 1rem;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .login-box input:focus { border-color: var(--rust); }
+  .login-box input::placeholder { color: rgba(255,255,255,0.25); }
+  .btn-login {
+    padding: 0.9rem;
+    background: var(--rust);
+    color: white;
+    border: none;
+    border-radius: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-login:hover { background: var(--rust-light); }
+  .login-error {
+    color: #ff6b6b; font-size: 0.8rem; text-align: center;
+    display: none;
+  }
+
+  /* ── Dashboard Layout ── */
+  #dashboard { display: none; }
+
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250,248,244,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 1.1rem 2.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .header-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .header-logo span { color: var(--rust); }
+  .header-right { display: flex; align-items: center; gap: 1.5rem; }
+  .admin-badge {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rust);
+    background: rgba(181,69,27,0.08);
+    padding: 0.3rem 0.7rem;
+    border-radius: 2px;
+    border: 1px solid rgba(181,69,27,0.2);
+  }
+  .btn-logout {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none; border: 1px solid var(--border);
+    padding: 0.4rem 1rem; border-radius: 2px;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-logout:hover { color: var(--rust); border-color: var(--rust); }
+
+  main { padding: 2.5rem; max-width: 1200px; margin: 0 auto; }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 0; border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .tab {
+    padding: 0.8rem 1.8rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+    background: none; border-left: none; border-right: none; border-top: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--rust); border-bottom-color: var(--rust); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Stats Grid ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .stat-value.accent { color: var(--rust); }
+
+  /* ── Chart ── */
+  .chart-section {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.8rem;
+    margin-bottom: 2rem;
+  }
+  .chart-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.6rem;
+    height: 140px;
+  }
+  .bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  .bar {
+    width: 100%;
+    background: var(--rust);
+    opacity: 0.7;
+    border-radius: 2px 2px 0 0;
+    transition: opacity 0.2s;
+    min-height: 2px;
+  }
+  .bar:hover { opacity: 1; }
+  .bar-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Device donut */
+  .device-row {
+    display: flex; gap: 1rem; flex-direction: column;
+  }
+  .device-item {
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .device-bar-track {
+    flex: 1; height: 6px;
+    background: var(--border); border-radius: 3px; overflow: hidden;
+  }
+  .device-bar-fill {
+    height: 100%; background: var(--rust); border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+  .device-name { font-size: 0.78rem; color: var(--ink-soft); width: 60px; }
+  .device-pct { font-size: 0.78rem; color: var(--muted); width: 36px; text-align: right; }
+
+  /* ── Messages Table ── */
+  .messages-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.2rem;
+  }
+  .messages-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+  }
+  .unread-badge {
+    background: var(--rust);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    margin-left: 0.6rem;
+  }
+
+  .messages-list { display: flex; flex-direction: column; gap: 0.8rem; }
+
+  .message-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.4rem 1.6rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.8rem;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .message-card:hover { border-color: var(--gold); }
+  .message-card.unread { border-left: 3px solid var(--rust); }
+
+  .msg-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+  .msg-email {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .msg-project {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rust);
+    background: rgba(181,69,27,0.07);
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    margin-bottom: 0.6rem;
+  }
+  .msg-text {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .msg-meta {
+    text-align: right;
+    display: flex; flex-direction: column; justify-content: space-between;
+    align-items: flex-end;
+  }
+  .msg-date {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .msg-actions { display: flex; gap: 0.5rem; }
+  .btn-icon {
+    background: none; border: 1px solid var(--border);
+    border-radius: 2px; padding: 0.3rem 0.6rem;
+    font-size: 0.75rem; cursor: pointer;
+    color: var(--muted); transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-icon:hover { color: var(--rust); border-color: var(--rust); }
+  .btn-icon.del:hover { color: #e53e3e; border-color: #e53e3e; }
+
+  /* Message modal */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    max-width: 500px; width: 90%;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem; font-weight: 300;
+    margin-bottom: 0.3rem;
+  }
+  .modal-email { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; }
+  .modal-body { font-size: 0.9rem; line-height: 1.8; color: var(--ink-soft); }
+  .modal-close {
+    float: right; background: none; border: none;
+    font-size: 1.2rem; cursor: pointer; color: var(--muted);
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--rust); }
+
+  .empty-state {
+    text-align: center; padding: 4rem;
+    color: var(--muted); font-size: 0.9rem;
+  }
+
+  .loading {
+    text-align: center; padding: 3rem;
+    color: var(--muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    main { padding: 1.2rem; }
+    header { padding: 1rem 1.2rem; }
+    .message-card { grid-template-columns: 1fr; }
+    .msg-meta { flex-direction: row; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div>
+    <div class="login-logo">S<span>.</span></div>
+    <div class="login-sub" style="text-align:center;margin-top:0.3rem;">Admin Portal</div>
+  </div>
+  <div class="login-box">
+    <input type="password" id="adminKeyInput" placeholder="Enter admin key…" />
+    <button class="btn-login" onclick="login()">Access Dashboard</button>
+    <div class="login-error" id="loginError">Invalid admin key. Try again.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <header>
+    <div class="header-logo">Shabnam<span>.</span></div>
+    <div class="header-right">
+      <span class="admin-badge">Admin</span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('overview', this)">Overview</button>
+      <button class="tab" onclick="switchTab('messages', this)">
+        Messages <span class="unread-badge" id="unreadCount">0</span>
+      </button>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div class="tab-panel active" id="tab-overview">
+      <div class="stats-grid" id="statsGrid">
+        <div class="loading">Loading stats…</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 1.2rem;">
+        <div class="chart-section">
+          <div class="chart-title">Visitors — Last 7 Days</div>
+          <div class="bar-chart" id="barChart">
+            <div class="loading" style="padding:1rem;flex:1;text-align:center;">Loading…</div>
+          </div>
+        </div>
+        <div class="chart-section">
+          <div class="chart-title">Device Breakdown</div>
+          <div class="device-row" id="deviceChart">
+            <div class="loading" style="padding:1rem;">Loading…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES TAB -->
+    <div class="tab-panel" id="tab-messages">
+      <div class="messages-header">
+        <div class="messages-title">Messages</div>
+      </div>
+      <div class="messages-list" id="messagesList">
+        <div class="loading">Loading messages…</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MESSAGE MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-name" id="modalName"></div>
+    <div class="modal-email" id="modalEmail"></div>
+    <div class="msg-project" id="modalProject" style="margin-bottom:1rem;"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div style="margin-top:1rem;font-size:0.75rem;color:var(--muted);" id="modalDate"></div>
+  </div>
+</div>
+
+<script>
+  // ── Config ── replace with your deployed backend URL
+  const API_BASE = 'https://port-production-7055.up.railway.app';
+
+  let adminKey = '';
+  let allMessages = [];
+
+  function login() {
+    const key = document.getElementById('adminKeyInput').value.trim();
+    if (!key) return;
+    adminKey = key;
+    fetchStats().then(data => {
+      if (data.error) {
+        document.getElementById('loginError').style.display = 'block';
+        adminKey = '';
+      } else {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        renderStats(data);
+        fetchMessages();
+      }
+    });
+  }
+
+  document.getElementById('adminKeyInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+
+  function logout() {
+    adminKey = '';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('adminKeyInput').value = '';
+  }
+
+  // ── API calls ──
+  async function fetchStats() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/stats`, {
+        headers: { 'x-admin-key': adminKey }
+      });
+      return await res.json();
+    } catch { return { error: true }; }
+  }
+
+  async function fetchMessages() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/messages`, {
+        headers: { 'x-admin-key': adminKey }
+      });
+      allMessages = await res.json();
+      renderMessages(allMessages);
+    } catch {
+      document.getElementById('messagesList').innerHTML = '<div class="empty-state">Could not load messages.</div>';
+    }
+  }
+
+  // ── Render stats ──
+  function renderStats(data) {
+    document.getElementById('unreadCount').textContent = data.unreadLeads || 0;
+
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-label">Total Visitors</div>
+        <div class="stat-value">${data.totalVisitors || 0}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Leads</div>
+        <div class="stat-value">${data.totalLeads || 0}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Unread Messages</div>
+        <div class="stat-value accent">${data.unreadLeads || 0}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Conversion Rate</div>
+        <div class="stat-value">${data.totalVisitors ? ((data.totalLeads / data.totalVisitors) * 100).toFixed(1) : 0}<span style="font-size:1.2rem">%</span></div>
+      </div>
+    `;
+
+    // Bar chart
+    const days = data.dailyVisitors || [];
+    if (days.length === 0) {
+      document.getElementById('barChart').innerHTML = '<div class="empty-state" style="padding:1rem;">No visitor data yet.</div>';
+    } else {
+      const max = Math.max(...days.map(d => d.count), 1);
+      document.getElementById('barChart').innerHTML = days.map(d => {
+        const pct = Math.round((d.count / max) * 100);
+        const label = d._id.slice(5); // MM-DD
+        return `<div class="bar-wrap">
+          <div class="bar" style="height:${pct}%" title="${d.count} visitors"></div>
+          <div class="bar-label">${label}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // Device breakdown
+    const devices = data.deviceBreakdown || [];
+    const total = devices.reduce((s, d) => s + d.count, 0) || 1;
+    const icons = { mobile: '📱', desktop: '🖥️', tablet: '📲' };
+    document.getElementById('deviceChart').innerHTML = devices.map(d => {
+      const pct = Math.round((d.count / total) * 100);
+      return `<div class="device-item">
+        <span class="device-name">${icons[d._id] || '🖥️'} ${d._id}</span>
+        <div class="device-bar-track"><div class="device-bar-fill" style="width:${pct}%"></div></div>
+        <span class="device-pct">${pct}%</span>
+      </div>`;
+    }).join('') || '<div style="color:var(--muted);font-size:0.85rem;">No data yet.</div>';
+  }
+
+  // ── Render messages ──
+  function renderMessages(messages) {
+    if (!messages.length) {
+      document.getElementById('messagesList').innerHTML = '<div class="empty-state">No messages yet. Your contact form is all set — waiting for leads! 🎯</div>';
+      return;
+    }
+    document.getElementById('messagesList').innerHTML = messages.map(m => `
+      <div class="message-card ${m.read ? '' : 'unread'}" id="card-${m._id}">
+        <div onclick="openModal('${m._id}')">
+          <div class="msg-name">${escHtml(m.name)}</div>
+          <div class="msg-email">${escHtml(m.email)}</div>
+          ${m.projectType ? `<span class="msg-project">${escHtml(m.projectType)}</span>` : ''}
+          <div class="msg-text">${escHtml((m.message || '').slice(0, 120))}${(m.message||'').length > 120 ? '…' : ''}</div>
+        </div>
+        <div class="msg-meta">
+          <div class="msg-date">${formatDate(m.createdAt)}</div>
+          <div class="msg-actions">
+            ${!m.read ? `<button class="btn-icon" onclick="markRead('${m._id}', event)" title="Mark read">✓ Read</button>` : ''}
+            <button class="btn-icon del" onclick="deleteMsg('${m._id}', event)" title="Delete">🗑</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function openModal(id) {
+    const m = allMessages.find(x => x._id === id);
+    if (!m) return;
+    document.getElementById('modalName').textContent = m.name;
+    document.getElementById('modalEmail').textContent = m.email;
+    document.getElementById('modalProject').textContent = m.projectType || '';
+    document.getElementById('modalProject').style.display = m.projectType ? 'inline-block' : 'none';
+    document.getElementById('modalBody').textContent = m.message || '(no message)';
+    document.getElementById('modalDate').textContent = formatDate(m.createdAt);
+    document.getElementById('modal').classList.add('open');
+    if (!m.read) markRead(id);
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modal')) closeModalDirect();
+  }
+  function closeModalDirect() {
+    document.getElementById('modal').classList.remove('open');
+  }
+
+  async function markRead(id, e) {
+    if (e) e.stopPropagation();
+    await fetch(`${API_BASE}/api/admin/messages/${id}/read`, {
+      method: 'PATCH', headers: { 'x-admin-key': adminKey }
+    });
+    const m = allMessages.find(x => x._id === id);
+    if (m) m.read = true;
+    const card = document.getElementById('card-' + id);
+    if (card) { card.classList.remove('unread'); card.querySelector('.btn-icon')?.remove(); }
+    document.getElementById('unreadCount').textContent = allMessages.filter(x => !x.read).length;
+  }
+
+  async function deleteMsg(id, e) {
+    e.stopPropagation();
+    if (!confirm('Delete this message?')) return;
+    await fetch(`${API_BASE}/api/admin/messages/${id}`, {
+      method: 'DELETE', headers: { 'x-admin-key': adminKey }
+    });
+    allMessages = allMessages.filter(x => x._id !== id);
+    renderMessages(allMessages);
+    document.getElementById('unreadCount').textContent = allMessages.filter(x => !x.read).length;
+  }
+
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleString('en-IN', {
+      day: 'numeric', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+  function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+</script>
+</body>
+</html>
