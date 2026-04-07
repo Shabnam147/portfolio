@@ -102,6 +102,28 @@ app.get('/api/admin/stats', async (req, res) => {
   }
 });
 
+// Mark as read
+app.patch('/api/admin/messages/:id/read', async (req, res) => {
+  const secret = req.headers['x-admin-key'];
+  if (secret !== process.env.ADMIN_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  await Contact.findByIdAndUpdate(req.params.id, { read: true });
+  res.json({ success: true });
+});
+
+// Delete message
+app.delete('/api/admin/messages/:id', async (req, res) => {
+  const secret = req.headers['x-admin-key'];
+  if (secret !== process.env.ADMIN_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  await Contact.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
 // GET /api/health — Health check
 app.get('/api/health', (req, res) => {
   res.json({
